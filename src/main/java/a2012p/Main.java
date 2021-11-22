@@ -28,7 +28,10 @@ public class Main {
         "  Ada.Text_IO.Put_Line (\"Hello, World!\");\n" +
         "end Greet;";
 
+    System.out.println(source + "\n");
+
     dump(source);
+    System.out.println();
 
     Ada2012Lexer lexer = new Ada2012Lexer(CharStreams.fromString(source));
     Ada2012Parser parser = new Ada2012Parser(new CommonTokenStream(lexer));

@@ -15,7 +15,8 @@ compilation
 ///     context_clause library_item
 ///   | context_clause subunit
 compilation_unit
- : context_clause library_item
+ : pragma
+ | context_clause library_item
  | context_clause subunit
  ;
 
@@ -455,7 +456,8 @@ declarative_part
 /// declarative_item ::=
 ///     basic_declarative_item | body
 declarative_item
- : basic_declarative_item
+ : pragma
+ | basic_declarative_item
  | body
  ;
 
@@ -895,7 +897,8 @@ protected_definition
    END IDENTIFIER?
  ;
 
-/// protected_operation_declaration ::= subprogram_declaration
+/// protected_operation_declaration ::=
+///      subprogram_declaration
 ///    | entry_declaration
 ///    | aspect_clause
 protected_operation_declaration
@@ -904,7 +907,8 @@ protected_operation_declaration
  | aspect_clause
  ;
 
-/// protected_element_declaration ::= protected_operation_declaration
+/// protected_element_declaration ::=
+///      protected_operation_declaration
 ///    | component_declaration
 protected_element_declaration
  : protected_operation_declaration
@@ -1319,9 +1323,9 @@ formal_decimal_fixed_point_definition
 ///    | [overriding_indicator] procedure defining_program_unit_name is new generic_procedure_name [generic_actual_part] [aspect_specification];
 ///    | [overriding_indicator] function defining_designator is new generic_function_name [generic_actual_part] [aspect_specification];
 generic_instantiation
- : PACKAGE name IS NEW name generic_actual_part? aspect_specification? SEMI
- | overriding_indicator? PROCEDURE name IS NEW name generic_actual_part? aspect_specification? SEMI
- | overriding_indicator? FUNCTION name IS NEW name generic_actual_part? aspect_specification? SEMI
+ : PACKAGE name IS ( NEW name generic_actual_part? aspect_specification? | NULL ) SEMI
+ | overriding_indicator? PROCEDURE name IS ( NEW name generic_actual_part? aspect_specification? | NULL ) SEMI
+ | overriding_indicator? FUNCTION name IS ( NEW name generic_actual_part? aspect_specification? | NULL ) SEMI
  ;
 
 /// full_type_declaration ::=
@@ -2005,9 +2009,9 @@ primary
  | aggregate
  | name
  | allocator
+ | conditional_expression // the parens will be matched by `OPAR expression CPAR`
+ | quantified_expression  // the parens will be matched by `OPAR expression CPAR`
  | OPAR expression CPAR
- | OPAR conditional_expression CPAR
- | OPAR quantified_expression CPAR
  ;
 
 /// conditional_expression ::= if_expression | case_expression
@@ -2114,7 +2118,8 @@ condition
  : expression
  ;
 
-/// quantified_expression ::= for quantifier loop_parameter_specification => predicate
+/// quantified_expression ::=
+///     for quantifier loop_parameter_specification => predicate
 ///   | for quantifier iterator_specification => predicate
 quantified_expression
  : FOR quantifier loop_parameter_specification ARROW predicate
