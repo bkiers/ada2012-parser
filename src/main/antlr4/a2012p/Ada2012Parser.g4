@@ -213,9 +213,9 @@ code_statement
 ///       sequence_of_statements]
 ///     end if;
 if_statement
- : IF expression THEN sequence_of_statements
-   ( ELSIF condition THEN sequence_of_statements )*
-   ( ELSE sequence_of_statements )?
+ : IF expression THEN sequence_of_statements?
+   ( ELSIF condition THEN sequence_of_statements? )*
+   ( ELSE sequence_of_statements? )?
    END IF SEMI
  ;
 
@@ -245,7 +245,7 @@ case_statement_alternative
 loop_statement
  : ( IDENTIFIER COL )?
    iteration_scheme? LOOP
-   sequence_of_statements
+   sequence_of_statements?
    END LOOP IDENTIFIER? SEMI
  ;
 
@@ -332,7 +332,7 @@ selective_accept
  : SELECT
    guard? select_alternative
    ( OR guard? select_alternative )*
-   ( ELSE sequence_of_statements )?
+   ( ELSE sequence_of_statements? )?
    END SELECT SEMI
  ;
 
@@ -352,7 +352,7 @@ timed_entry_call
 ///   end select;
 conditional_entry_call
  : SELECT entry_call_alternative
-   ELSE sequence_of_statements
+   ELSE sequence_of_statements?
    END SELECT SEMI
  ;
 
@@ -364,7 +364,7 @@ conditional_entry_call
 /// abortable_part ::= sequence_of_statements
 asynchronous_select
  : SELECT triggering_alternative
-   THEN ABORT sequence_of_statements
+   THEN ABORT sequence_of_statements?
    END SELECT SEMI
  ;
 
@@ -430,7 +430,7 @@ procedure_or_entry_call
 ///      exception_handler
 ///     {exception_handler}]
 handled_sequence_of_statements
- : sequence_of_statements ( EXCEPTION exception_handler+ )?
+ : sequence_of_statements? ( EXCEPTION exception_handler+ )?
  ;
 
 /// exception_handler ::=
@@ -605,7 +605,7 @@ function_specification
  : FUNCTION defining_designator parameter_and_result_profile
  ;
 
-/// defining_program_unit_name ::= [parent_unit_name . ]defining_identifier
+/// defining_program_unit_name ::= [ parent_unit_name . ] defining_identifier
 defining_program_unit_name
  : ( name DOT )? IDENTIFIER
  ;

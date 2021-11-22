@@ -17,21 +17,27 @@ public class RegressionTest {
   private Ada2012Lexer lexer = null;
   private Ada2012Parser parser = null;
 
-  //@Test
+  @Test
   public void test() throws IOException {
     Path resourceDirectory = Paths.get("src","test", "resources");
 
     Files.walk(resourceDirectory)
         .filter(f -> Files.isRegularFile(f) && f.toString().matches(".*\\.(ada|adb|ads|adabody|ada_specification)"))
         .forEach(f -> this.parse(f.toAbsolutePath().toString()));
+
+    System.out.println("failed=" + failed);
   }
 
+  int failed = 0;
+
   private void parse(String fileName) {
+
     try {
       if (this.lexer == null) {
         this.lexer = new Ada2012Lexer(CharStreams.fromFileName(fileName));
         this.parser = new Ada2012Parser(new CommonTokenStream(this.lexer));
 
+        this.parser.removeErrorListeners();
         this.parser.setErrorHandler(new BailErrorStrategy());
       }
       else {
@@ -45,9 +51,12 @@ public class RegressionTest {
       this.parser.compilation();
     }
     catch (Exception e) {
-      System.err.printf("ERROR: %s\n", fileName);
+//      System.err.printf("ERROR: %s\n", fileName);
+//
+//      fail("Failed to parse: " + fileName);
 
-      fail("Failed to parse: " + fileName);
+      failed++;
+      System.out.println(fileName);
     }
   }
 }
